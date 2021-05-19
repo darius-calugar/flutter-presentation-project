@@ -19,7 +19,7 @@ class CategoriesPage extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: ClipOval(
                 child: Image.network(
-                  'https://picsum.photos/id/55/64/64',
+                  'https://github.com/identicons/username0.png',
                 ),
               ),
             ),

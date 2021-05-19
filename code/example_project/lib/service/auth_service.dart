@@ -1,16 +1,27 @@
 import 'package:example_project/model/user_model.dart';
-import 'package:flutter/material.dart';
+import 'package:example_project/service/app_database.dart';
 
 class AuthService {
-  static Future<UserModel> auth(String username, String password) {
-    return Future.delayed(
-      Duration(seconds: 1),
-      () {
-        if (username == 'Guest' && password == 'pass')
-          return UserModel(1, username, NetworkImage('https://randomuser.me/api/portraits/lego/1.jpg'));
-        else
-          return Future.error(Error());
-      },
+  static Future<UserModel> login(String username, String password) async {
+    var maps = await AppDatabase.database.query(
+      'User',
+      where: 'username = ? and password = ?',
+      whereArgs: [username, password],
+      limit: 1,
     );
+    if (maps.isNotEmpty) {
+      var user = UserModel(1, maps.first['username'], maps.first['password']);
+      AppDatabase.currentUser = user;
+      return user;
+    } else
+      return null;
+  }
+
+  static void logout() {
+    AppDatabase.currentUser = null;
+  }
+
+  static UserModel currentUser() {
+    return AppDatabase.currentUser;
   }
 }
