@@ -1,7 +1,33 @@
+import 'package:example_project/service/auth_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   const RegisterPage({Key key}) : super(key: key);
+
+  @override
+  _RegisterPageState createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  final _registerFormKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _repeatPasswordController = TextEditingController();
+  String _error = '';
+  String _identiconUrl = '';
+
+  _RegisterPageState() {
+    _usernameController.text = '';
+    _passwordController.text = '';
+    _repeatPasswordController.text = '';
+
+    _usernameController.addListener(() {
+      setState(() {
+        _identiconUrl = 'https://picsum.photos/seed/${_usernameController.value.text}/512/512';
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,48 +42,41 @@ class RegisterPage extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    SizedBox(
+                      height: 256,
+                      width: 256,
+                      child: Material(
+                        type: MaterialType.circle,
+                        color: Theme.of(context).colorScheme.surface,
+                        elevation: 4,
+                        child: ClipOval(
+                          child: Stack(
+                            children: [
+                              Center(
+                                child: Icon(
+                                  Icons.face,
+                                  size: 256,
+                                  color: Theme.of(context).dividerColor,
+                                ),
+                              ),
+                              if (_usernameController.value.text.isNotEmpty)
+                                Image.network(
+                                  _identiconUrl,
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 32),
                     Form(
+                      key: _registerFormKey,
                       child: Column(
                         children: [
-                          SizedBox(
-                            height: 256,
-                            width: 256,
-                            child: Material(
-                              type: MaterialType.circle,
-                              color: Theme.of(context).colorScheme.surface,
-                              elevation: 4,
-                              child: Stack(
-                                children: [
-                                  ClipOval(
-                                    child: Image.network(
-                                      'https://randomuser.me/api/portraits/lego/6.jpg',
-                                    ),
-                                  ),
-                                  Positioned.directional(
-                                    end: 18,
-                                    bottom: 18,
-                                    textDirection: TextDirection.ltr,
-                                    child: SizedBox(
-                                      width: 48,
-                                      height: 48,
-                                      child: Material(
-                                        type: MaterialType.circle,
-                                        color: Theme.of(context).colorScheme.primary,
-                                        elevation: 8,
-                                        child: Icon(
-                                          Icons.camera_alt,
-                                          color: Theme.of(context).colorScheme.onPrimary,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 32),
                           TextFormField(
                             textInputAction: TextInputAction.next,
+                            validator: _usernameValidator,
+                            controller: _usernameController,
                             decoration: InputDecoration(
                               hintText: "Username",
                               prefixIcon: Icon(Icons.person),
@@ -66,6 +85,8 @@ class RegisterPage extends StatelessWidget {
                           TextFormField(
                             textInputAction: TextInputAction.next,
                             obscureText: true,
+                            validator: _passwordValidator,
+                            controller: _passwordController,
                             decoration: InputDecoration(
                               hintText: "Password",
                               prefixIcon: Icon(Icons.lock),
@@ -74,6 +95,8 @@ class RegisterPage extends StatelessWidget {
                           TextFormField(
                             textInputAction: TextInputAction.done,
                             obscureText: true,
+                            validator: _repeatPasswordValidator,
+                            controller: _repeatPasswordController,
                             decoration: InputDecoration(
                               hintText: "Repeat Password",
                               prefixIcon: Icon(Icons.lock),
@@ -82,14 +105,19 @@ class RegisterPage extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 32),
+                    Container(
+                      height: 32,
+                      alignment: Alignment.bottomCenter,
+                      child: Text(
+                        _error,
+                        style: Theme.of(context).textTheme.caption.copyWith(color: Theme.of(context).colorScheme.error),
+                      ),
+                    ),
                     Row(
                       children: [
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
+                            onPressed: _onCreateAccount,
                             child: Text('Create Account'),
                           ),
                         ),
@@ -102,9 +130,7 @@ class RegisterPage extends StatelessWidget {
                         ),
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
+                            onPressed: _onGoBack,
                             child: Text('Go Back'),
                           ),
                         ),
@@ -118,5 +144,44 @@ class RegisterPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _onCreateAccount() {
+    if (_registerFormKey.currentState.validate()) {
+      AuthService.register(
+        _usernameController.value.text,
+        _passwordController.value.text,
+      ).then((success) {
+        if (success) {
+          setState(() {
+            _error = '';
+          });
+          Navigator.pop(context);
+        } else {
+          setState(() {
+            _error = 'Could not create account. Username might not be unique.';
+          });
+        }
+      });
+    }
+  }
+
+  void _onGoBack() {
+    Navigator.pop(context);
+  }
+
+  String _usernameValidator(String value) {
+    if (value.isEmpty) return 'Username is required';
+    return null;
+  }
+
+  String _passwordValidator(String value) {
+    if (value.isEmpty) return 'Password is required';
+    return null;
+  }
+
+  String _repeatPasswordValidator(String value) {
+    if (value != _passwordController.value.text) return 'Passwords do not match';
+    return null;
   }
 }

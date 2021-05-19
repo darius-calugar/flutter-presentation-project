@@ -4,7 +4,6 @@ import 'package:example_project/pages/register_page/register_page.dart';
 import 'package:example_project/service/app_database.dart';
 import 'package:example_project/themes/themes.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

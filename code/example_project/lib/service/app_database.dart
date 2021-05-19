@@ -17,7 +17,7 @@ class AppDatabase {
       onCreate: (database, version) async {
         database.execute('CREATE TABLE User ('
             'id INTEGER PRIMARY KEY, '
-            'username TEXT, '
+            'username TEXT UNIQUE, '
             'password TEXT)');
 
         database.execute('CREATE TABLE Category ('
