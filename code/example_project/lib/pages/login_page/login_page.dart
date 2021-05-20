@@ -26,112 +26,110 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Scaffold(
-        body: Container(
-          padding: EdgeInsets.fromLTRB(32, 128, 32, 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      body: Container(
+        padding: EdgeInsets.fromLTRB(32, 128, 32, 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Hello,',
+                  style: Theme.of(context).textTheme.headline2.copyWith(
+                        color: Theme.of(context).colorScheme.onBackground,
+                        fontWeight: FontWeight.w400,
+                      ),
+                ),
+                Text(
+                  'Shopper',
+                  style: Theme.of(context).textTheme.headline2.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.w300,
+                      ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Hello,',
-                    style: Theme.of(context).textTheme.headline2.copyWith(
-                          color: Theme.of(context).colorScheme.onBackground,
-                          fontWeight: FontWeight.w400,
+                  Form(
+                    key: _loginFormKey,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          textInputAction: TextInputAction.next,
+                          validator: usernameValidator,
+                          controller: _usernameController,
+                          decoration: InputDecoration(
+                            hintText: "Username",
+                            prefixIcon: Icon(Icons.person),
+                          ),
                         ),
+                        TextFormField(
+                          textInputAction: TextInputAction.done,
+                          obscureText: true,
+                          validator: passwordValidator,
+                          controller: _passwordController,
+                          decoration: InputDecoration(
+                            hintText: "Password",
+                            prefixIcon: Icon(Icons.lock),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  Text(
-                    'Shopper',
-                    style: Theme.of(context).textTheme.headline2.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.w300,
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: _rememberCredentials,
+                        onChanged: onRememberCredentialsChanged,
+                      ),
+                      Text('Remember login credentials')
+                    ],
+                  ),
+                  Container(
+                    height: 32,
+                    alignment: Alignment.bottomCenter,
+                    child: Text(
+                      _error,
+                      style: Theme.of(context).textTheme.caption.copyWith(color: Theme.of(context).colorScheme.error),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: onLogin,
+                          child: Text('Login'),
                         ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'or',
+                          style: Theme.of(context).textTheme.subtitle1,
+                        ),
+                      ),
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: onRegister,
+                          child: Text('Register'),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Form(
-                      key: _loginFormKey,
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            textInputAction: TextInputAction.next,
-                            validator: usernameValidator,
-                            controller: _usernameController,
-                            decoration: InputDecoration(
-                              hintText: "Username",
-                              prefixIcon: Icon(Icons.person),
-                            ),
-                          ),
-                          TextFormField(
-                            textInputAction: TextInputAction.done,
-                            obscureText: true,
-                            validator: passwordValidator,
-                            controller: _passwordController,
-                            decoration: InputDecoration(
-                              hintText: "Password",
-                              prefixIcon: Icon(Icons.lock),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: _rememberCredentials,
-                          onChanged: onRememberCredentialsChanged,
-                        ),
-                        Text('Remember login credentials')
-                      ],
-                    ),
-                    Container(
-                      height: 32,
-                      alignment: Alignment.bottomCenter,
-                      child: Text(
-                        _error,
-                        style: Theme.of(context).textTheme.caption.copyWith(color: Theme.of(context).colorScheme.error),
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: onLogin,
-                            child: Text('Login'),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            'or',
-                            style: Theme.of(context).textTheme.subtitle1,
-                          ),
-                        ),
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: onRegister,
-                            child: Text('Register'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Text(
-                "Hint: Login credentials are 'Guest' and 'pass'.",
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.caption,
-              )
-            ],
-          ),
+            ),
+            Text(
+              "Hint: Login credentials are 'Guest' and 'pass'.",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.caption,
+            )
+          ],
         ),
       ),
     );

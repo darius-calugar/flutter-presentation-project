@@ -59,6 +59,11 @@ class AppDatabase {
             <ProductModel>[
               ProductModel(null, 'Debug Product 1', 'description', null, 19999, 0, 999, null),
               ProductModel(null, 'Debug Product 2', 'description', null, 29999, 20, 999, null),
+              ProductModel(null, 'Debug Product 3', 'description', null, 8999, 20, 999, null),
+              ProductModel(null, 'Debug Product 4', 'description', null, 7999, 20, 999, null),
+              ProductModel(null, 'Debug Product 5', 'description', null, 12999, 20, 999, null),
+              ProductModel(null, 'Debug Product 6', 'description', null, 49999, 20, 999, null),
+              ProductModel(null, 'Debug Product 7', 'description', null, 46999, 20, 999, null),
             ],
           ),
           CategoryModel(

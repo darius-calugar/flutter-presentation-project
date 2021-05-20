@@ -10,12 +10,12 @@ class Themes {
           onBackground: const Color(0xFF333333),
           onSurface: const Color(0xFF333333),
           // Primary Swatch
-          primary: const Color(0xFF67C48A),
-          primaryVariant: const Color(0xFF45B06E),
+          primary: const Color(0xFFD05664),
+          primaryVariant: const Color(0xFFDB3043),
           onPrimary: const Color(0xFFFFFFFF),
           // Secondary Swatch
-          secondary: const Color(0xFF54D3E7),
-          secondaryVariant: const Color(0xFF38A8BC),
+          secondary: const Color(0xFF4EA3B8),
+          secondaryVariant: const Color(0xFF358EAB),
           onSecondary: const Color(0xFFFFFFFF),
           // Error Swatch
           error: const Color(0xFFF12323),
