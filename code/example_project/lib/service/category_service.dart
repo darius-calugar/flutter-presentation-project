@@ -1,36 +1,18 @@
+import 'dart:developer';
+
 import 'package:example_project/model/category_model.dart';
-import 'package:flutter/material.dart';
+import 'package:example_project/service/app_database.dart';
 
 class CategoryService {
-  static Future<List<CategoryModel>> getCategories() {
-    return Future.delayed(
-      Duration(seconds: 1),
-      () => <CategoryModel>[
-        CategoryModel(
-          2,
-          'Sneakers',
-          AssetImage('assets/images/categories/sneakers.png'),
-          [],
-        ),
-        CategoryModel(
-          1,
-          'Sport',
-          AssetImage('assets/images/categories/sport.png'),
-          [],
-        ),
-        CategoryModel(
-          3,
-          'Heels',
-          AssetImage('assets/images/categories/heels.png'),
-          [],
-        ),
-        CategoryModel(
-          4,
-          'Leather',
-          AssetImage('assets/images/categories/leather.png'),
-          [],
-        ),
-      ],
-    );
+  static Future<List<CategoryModel>> getCategories() async {
+    log('getCategories()', name: 'CategoryService', level: 0, time: DateTime.now());
+    return (await AppDatabase.database.query(
+      'Category',
+    ))
+        .map<CategoryModel>((json) => CategoryModel.fromJson(json))
+        .toList()
+          ..forEach((element) {
+            print(element);
+          });
   }
 }

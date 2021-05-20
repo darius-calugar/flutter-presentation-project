@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 
 class CategoryCard extends StatelessWidget {
   final CategoryModel categoryModel;
+  final void Function(CategoryModel) onPressed;
 
   const CategoryCard({
     Key key,
     this.categoryModel,
+    this.onPressed,
   }) : super(key: key);
 
   @override
@@ -22,9 +24,7 @@ class CategoryCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           child: Stack(
             children: [
-              Image(
-                image: categoryModel.imageProvider,
-              ),
+              categoryModel.imageBytes != null ? Image.memory(categoryModel.imageBytes) : Image.asset('assets/images/placeholder.png'),
               Positioned.fill(
                 child: DecoratedBox(
                   decoration: BoxDecoration(
@@ -86,7 +86,7 @@ class CategoryCard extends StatelessWidget {
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () => onPressed(categoryModel),
                   ),
                 ),
               )

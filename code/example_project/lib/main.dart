@@ -1,4 +1,4 @@
-import 'package:example_project/pages/categories_page/categories_page.dart';
+import 'package:example_project/pages/browse_page/browse_page.dart';
 import 'package:example_project/pages/login_page/login_page.dart';
 import 'package:example_project/pages/register_page/register_page.dart';
 import 'package:example_project/service/app_database.dart';
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
-        '/categories': (context) => CategoriesPage(),
+        '/categories': (context) => BrowsePage(),
       },
     );
   }
