@@ -1,4 +1,5 @@
 import 'package:example_project/pages/browse_page/browse_page.dart';
+import 'package:example_project/pages/details_page/details_page.dart';
 import 'package:example_project/pages/login_page/login_page.dart';
 import 'package:example_project/pages/register_page/register_page.dart';
 import 'package:example_project/service/app_database.dart';
@@ -16,12 +17,23 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      initialRoute: '/',
       theme: Themes.defaultTheme(),
+      initialRoute: '/',
       routes: {
         '/': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
-        '/categories': (context) => BrowsePage(),
+        '/browse': (context) => BrowsePage(),
+      },
+      onGenerateRoute: (settings) {
+        final args = settings.arguments as Map<String, dynamic>;
+        if (settings.name == '/details') {
+          return MaterialPageRoute(
+            builder: (context) => DetailsPage(
+              productId: args['productId'],
+            ),
+          );
+        }
+        return null;
       },
     );
   }

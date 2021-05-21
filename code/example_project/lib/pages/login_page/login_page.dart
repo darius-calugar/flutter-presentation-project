@@ -153,7 +153,7 @@ class _LoginPageState extends State<LoginPage> {
             sharedPreferences.remove('login_remember_credentials');
           }
         });
-        Navigator.pushReplacementNamed(context, '/categories');
+        Navigator.pushReplacementNamed(context, '/browse');
         setState(() {
           _error = '';
         });

@@ -10,8 +10,8 @@ class Themes {
           onBackground: const Color(0xFF333333),
           onSurface: const Color(0xFF333333),
           // Primary Swatch
-          primary: const Color(0xFFD05664),
-          primaryVariant: const Color(0xFFDB3043),
+          primary: const Color(0xFFD04E4E),
+          primaryVariant: const Color(0xFFC32F2F),
           onPrimary: const Color(0xFFFFFFFF),
           // Secondary Swatch
           secondary: const Color(0xFF4EA3B8),

@@ -230,7 +230,6 @@ class _BrowsePageState extends State<BrowsePage> {
                     children: snapshot.data
                         .map((e) => ProductCard(
                               productModel: e,
-                              onPressed: (product) {},
                             ))
                         .toList(),
                   );

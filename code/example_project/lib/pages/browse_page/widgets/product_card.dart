@@ -4,12 +4,10 @@ import 'package:flutter/material.dart';
 
 class ProductCard extends StatelessWidget {
   final ProductModel productModel;
-  final void Function(ProductModel) onPressed;
 
   const ProductCard({
     Key key,
     this.productModel,
-    this.onPressed,
   }) : super(key: key);
 
   @override
@@ -97,7 +95,7 @@ class ProductCard extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                     child: OutlinedButton(
-                      onPressed: () {},
+                      onPressed: () => Navigator.pushNamed(context, '/details', arguments: {'productId': productModel.id}),
                       child: Text('See details'),
                     ),
                   ),

@@ -17,13 +17,11 @@ class ProductService {
     ''')).map((json) => ProductModel.fromJson(json)).toList();
   }
 
-  static Future<List<ProductModel>> getCategoryProducts(CategoryModel category) async {
-    return (await AppDatabase.database.query(
-      'Product',
-      where: 'categoryId = ?',
-      whereArgs: [category.id],
-    ))
-        .map((json) => ProductModel.fromJson(json))
-        .toList();
+  static Future<ProductModel> getProduct(int id) async {
+    return (await AppDatabase.database.rawQuery('''
+      SELECT *
+      FROM Product
+      where id = $id
+    ''')).map((json) => ProductModel.fromJson(json)).first;
   }
 }
