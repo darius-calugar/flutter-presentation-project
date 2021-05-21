@@ -11,6 +11,7 @@ class ProductModel {
   final int sale;
   final int stock;
   final CategoryModel category;
+  double relevance;
 
   ProductModel(
     this.id,
@@ -20,12 +21,15 @@ class ProductModel {
     this.price,
     this.sale,
     this.stock,
-    this.category,
-  )   : assert(name.isNotEmpty),
+    this.category, {
+    this.relevance,
+  })  : assert(name.isNotEmpty),
         assert(description.isNotEmpty),
         assert(price > 0),
         assert(sale >= 0 && sale < 100),
-        assert(stock >= 0);
+        assert(stock >= 0) {
+    if (relevance == null) relevance = sale.toDouble();
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -37,6 +41,7 @@ class ProductModel {
       'sale': sale,
       'stock': stock,
       'category': category?.toJson(),
+      'relevance': relevance,
     }..removeWhere((key, value) => value == null);
   }
 
@@ -50,6 +55,7 @@ class ProductModel {
       json['sale'],
       json['stock'],
       json['category'],
+      relevance: json['relevance'],
     );
   }
 }

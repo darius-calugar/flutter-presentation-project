@@ -5,8 +5,8 @@ import 'package:example_project/pages/browse_page/widgets/product_card.dart';
 import 'package:example_project/service/auth_service.dart';
 import 'package:example_project/service/category_service.dart';
 import 'package:example_project/service/product_service.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class BrowsePage extends StatefulWidget {
   const BrowsePage({Key key}) : super(key: key);
@@ -16,9 +16,29 @@ class BrowsePage extends StatefulWidget {
 }
 
 class _BrowsePageState extends State<BrowsePage> {
-  TextEditingController _searchController = TextEditingController();
+  final _searchController = TextEditingController();
+  Future<List<CategoryModel>> _categories = CategoryService.getCategories();
+  Future<List<ProductModel>> _products = Future.value([]);
+
+  // Query Parameters
   CategoryModel _category;
   String _searchString = '';
+  static final int _defaultMinPrice = 0;
+  static final int _defaultMaxPrice = 100000;
+  int _minPrice = _defaultMinPrice;
+  int _maxPrice = _defaultMaxPrice;
+  static final int _defaultMinSale = 0;
+  static final int _defaultMaxSale = 100;
+  int _minSale = _defaultMinSale;
+  int _maxSale = _defaultMaxSale;
+  static final Map<String, Set<bool>> _sortOptions = {
+    'Relevance': {false},
+    'Price': {false, true},
+    'Sale': {false},
+  };
+  static final String _defaultSortField = 'Relevance';
+  String _sortField = _defaultSortField;
+  bool _sortAscending = false;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +66,7 @@ class _BrowsePageState extends State<BrowsePage> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 1,
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
@@ -60,7 +81,6 @@ class _BrowsePageState extends State<BrowsePage> {
             label: "Cart",
           ),
         ],
-        currentIndex: 1,
       ),
       body: ListView(
         children: [
@@ -110,7 +130,7 @@ class _BrowsePageState extends State<BrowsePage> {
               ),
             ),
           ),
-          if (_category != null || _searchString.isNotEmpty)
+          if (isQuerying())
             Container(
               height: 36,
               child: Row(
@@ -119,12 +139,19 @@ class _BrowsePageState extends State<BrowsePage> {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Material(
-                        elevation: 2,
-                        color: Theme.of(context).colorScheme.surface,
-                        borderRadius: BorderRadius.circular(100),
-                        child: Center(
-                          child: Text('Filter price'),
+                      child: ElevatedButton(
+                        onPressed: () => showFilterModalBottomSheet(),
+                        style: ButtonStyle(
+                            shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(32))),
+                            backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.surface),
+                            foregroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.onSurface),
+                            overlayColor: MaterialStateProperty.all(Theme.of(context).splashColor)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.filter_alt, size: 18),
+                            Text('Filter options'),
+                          ],
                         ),
                       ),
                     ),
@@ -132,15 +159,21 @@ class _BrowsePageState extends State<BrowsePage> {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Material(
-                        elevation: 2,
-                        color: Theme.of(context).colorScheme.surface,
-                        borderRadius: BorderRadius.circular(100),
-                        child: InkWell(
-                          onTap: () {},
-                          child: Center(
-                            child: Text('Sort by Relevance'),
-                          ),
+                      child: ElevatedButton(
+                        onPressed: () => showSortModalBottomSheet(),
+                        style: ButtonStyle(
+                            shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(32))),
+                            backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.surface),
+                            foregroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.onSurface),
+                            overlayColor: MaterialStateProperty.all(Theme.of(context).splashColor)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.sort, size: 18),
+                            Text('Sort by '),
+                            Text('$_sortField', style: TextStyle(fontWeight: FontWeight.bold)),
+                            if (_sortOptions[_sortField].length > 1) (_sortAscending ? Icon(Icons.north_east, size: 18) : Icon(Icons.south_east, size: 18)),
+                          ],
                         ),
                       ),
                     ),
@@ -167,9 +200,9 @@ class _BrowsePageState extends State<BrowsePage> {
                 ),
               ),
             ),
-          if (_category == null)
+          if (!isQuerying())
             FutureBuilder<List<CategoryModel>>(
-              future: CategoryService.getCategories(),
+              future: _categories,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return Column(
@@ -184,9 +217,9 @@ class _BrowsePageState extends State<BrowsePage> {
                 }
               },
             ),
-          if (_category != null)
+          if (isQuerying())
             FutureBuilder<List<ProductModel>>(
-              future: ProductService.getCategoryProducts(_category),
+              future: _products,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return GridView.count(
@@ -215,29 +248,213 @@ class _BrowsePageState extends State<BrowsePage> {
     );
   }
 
-  void onSetSearch(String string) {
-    setState(() {
-      _searchController.text = string;
-      _searchString = string;
-    });
+  void logout() {
+    AuthService.logout();
+    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => route == null);
   }
 
   void onSetCategory(CategoryModel category) {
     setState(() {
       _category = category;
     });
+    fetchProducts();
+  }
+
+  void onSetSearch(String string) {
+    setState(() {
+      _searchController.text = string;
+      _searchString = string;
+    });
+    fetchProducts();
   }
 
   void onReset() {
     _searchController.text = '';
     setState(() {
-      _searchString = '';
       _category = null;
+      _searchString = '';
+      _minPrice = _defaultMinPrice;
+      _maxPrice = _defaultMaxPrice;
+      _minSale = _defaultMinSale;
+      _maxSale = _defaultMaxSale;
+      _sortField = _defaultSortField;
+      _sortAscending = _sortOptions[_sortField].first;
+    });
+    fetchProducts();
+  }
+
+  bool isQuerying() {
+    return _category != null || _searchString.isNotEmpty;
+  }
+
+  void fetchProducts() async {
+    Future<List<ProductModel>> fetchedProducts;
+    fetchedProducts = ProductService.getProducts(
+      category: _category,
+      searchString: _searchString,
+      sortField: _sortField,
+      ascending: _sortAscending,
+    ).then((products) => products
+        .where(
+          (element) => element.price >= _minPrice && element.price <= _maxPrice && element.sale >= _minSale && element.sale <= _maxSale,
+        )
+        .toList());
+    setState(() {
+      _products = fetchedProducts;
     });
   }
 
-  void logout() {
-    AuthService.logout();
-    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => route == null);
+  void showFilterModalBottomSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (context) => StatefulBuilder(builder: (context, setState) {
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: 32, horizontal: 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Filter Options',
+                style: Theme.of(context).textTheme.headline5,
+              ),
+              SizedBox(height: 32),
+              Table(
+                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                columnWidths: {
+                  0: FlexColumnWidth(.25),
+                  1: IntrinsicColumnWidth(),
+                  2: FlexColumnWidth(.75),
+                  3: IntrinsicColumnWidth(),
+                },
+                children: [
+                  TableRow(
+                    children: [
+                      Text(
+                        'Price',
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                      Text('${_defaultMinPrice ~/ 100}'),
+                      StatefulBuilder(
+                        builder: (context, setState) {
+                          return RangeSlider(
+                            min: _defaultMinPrice / 100,
+                            max: _defaultMaxPrice.toDouble(),
+                            divisions: (_defaultMaxPrice - _defaultMinPrice) ~/ 100,
+                            values: RangeValues(_minPrice.toDouble(), _maxPrice.toDouble()),
+                            labels: RangeLabels('${_minPrice ~/ 100} RON', '${_maxPrice ~/ 100} RON'),
+                            onChanged: (value) {
+                              setState(() {
+                                _minPrice = value.start.toInt();
+                                _maxPrice = value.end.toInt();
+                              });
+                            },
+                          );
+                        },
+                      ),
+                      Text('${_defaultMaxPrice ~/ 100}'),
+                    ],
+                  ),
+                  TableRow(
+                    children: [
+                      Text(
+                        'Sale',
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                      Text('$_defaultMinSale%'),
+                      RangeSlider(
+                        min: _defaultMinSale.toDouble(),
+                        max: _defaultMaxSale.toDouble(),
+                        divisions: _defaultMaxSale - _defaultMinSale,
+                        values: RangeValues(_minSale.toDouble(), _maxSale.toDouble()),
+                        labels: RangeLabels('$_minSale%', '$_maxSale%'),
+                        onChanged: (value) {
+                          setState(() {
+                            _minSale = value.start.toInt();
+                            _maxSale = value.end.toInt();
+                          });
+                        },
+                      ),
+                      Text('$_defaultMaxSale%'),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 32),
+              ButtonBar(
+                children: [
+                  TextButton(
+                    child: Text('Clear'),
+                    onPressed: () {
+                      setState(() {
+                        _minPrice = _defaultMinPrice;
+                        _maxPrice = _defaultMaxPrice;
+                        _minSale = _defaultMinSale;
+                        _maxSale = _defaultMaxSale;
+                      });
+                    },
+                  ),
+                  ElevatedButton(
+                    child: Text('Apply Filters'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              )
+            ],
+          ),
+        );
+      }),
+    ).then((e) => fetchProducts());
+  }
+
+  void showSortModalBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => StatefulBuilder(builder: (context, setState) {
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: 32, horizontal: 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Sort Options',
+                style: Theme.of(context).textTheme.headline5,
+              ),
+              Divider(),
+            ]..addAll(
+                _sortOptions.entries.expand(
+                  (option) => option.value.map(
+                    (optionValue) => RadioListTile(
+                      value: option.key + optionValue.toString(),
+                      groupValue: _sortField + _sortAscending.toString(),
+                      title: Row(
+                        children: [
+                          Text(
+                            option.key,
+                            style: Theme.of(context).textTheme.subtitle1,
+                          ),
+                          if (option.value.length > 1)
+                            Icon(
+                              optionValue ? Icons.north_east : Icons.south_east,
+                              size: 18,
+                            ),
+                        ],
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _sortField = option.key;
+                          _sortAscending = optionValue;
+                        });
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                ),
+              ),
+          ),
+        );
+      }),
+    ).then((e) => fetchProducts());
   }
 }

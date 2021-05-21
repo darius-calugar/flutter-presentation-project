@@ -41,6 +41,7 @@ class AppDatabase {
               price INTEGER,
               sale INTEGER,
               stock INTEGER,
+              relevance REAL,
               categoryId REFERENCES Category(id)
             )''');
 
@@ -57,13 +58,13 @@ class AppDatabase {
             'Sneakers',
             (await rootBundle.load('assets/db/categories/sneakers.jpg')).buffer.asUint8List(),
             <ProductModel>[
-              ProductModel(null, 'Debug Product 1', 'description', null, 19999, 0, 999, null),
-              ProductModel(null, 'Debug Product 2', 'description', null, 29999, 20, 999, null),
-              ProductModel(null, 'Debug Product 3', 'description', null, 8999, 20, 999, null),
-              ProductModel(null, 'Debug Product 4', 'description', null, 7999, 20, 999, null),
-              ProductModel(null, 'Debug Product 5', 'description', null, 12999, 20, 999, null),
-              ProductModel(null, 'Debug Product 6', 'description', null, 49999, 20, 999, null),
-              ProductModel(null, 'Debug Product 7', 'description', null, 46999, 20, 999, null),
+              ProductModel(null, 'Debug Product 1', 'description', null, 19999, 0, 4, null),
+              ProductModel(null, 'Debug Product 2', 'description', null, 29999, 20, 17, null),
+              ProductModel(null, 'Debug Product 3', 'description', null, 8999, 0, 0, null),
+              ProductModel(null, 'Debug Product 4', 'description', null, 7999, 0, 0, null),
+              ProductModel(null, 'Debug Product 5', 'description', null, 12999, 50, 45, null),
+              ProductModel(null, 'Debug Product 6', 'description', null, 49999, 15, 21, null),
+              ProductModel(null, 'Debug Product 7', 'description', null, 46999, 70, 64, null),
             ],
           ),
           CategoryModel(

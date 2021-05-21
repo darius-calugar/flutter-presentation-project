@@ -50,10 +50,6 @@ class CategoryCard extends StatelessWidget {
                       categoryModel.name,
                       style: Theme.of(context).textTheme.headline5.copyWith(color: Colors.white),
                     ),
-                    Text(
-                      "${categoryModel.products.length} Products",
-                      style: Theme.of(context).textTheme.caption.copyWith(color: Colors.white70),
-                    ),
                   ],
                 ),
               ),

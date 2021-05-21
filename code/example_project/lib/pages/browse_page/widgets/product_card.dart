@@ -32,7 +32,7 @@ class ProductCard extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(8),
                       child: Text(
-                        productModel.name + ' ' + productModel.name,
+                        productModel.name,
                         textAlign: TextAlign.center,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -77,23 +77,23 @@ class ProductCard extends StatelessWidget {
                           color: Theme.of(context).colorScheme.primaryVariant,
                         ),
                   ),
-                  SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.star, color: Colors.orange[400]),
-                      Icon(Icons.star, color: Colors.orange[400]),
-                      Icon(Icons.star, color: Colors.orange[400]),
-                      Icon(Icons.star, color: Colors.orange[400]),
-                      Icon(Icons.star_border, color: Colors.orange[400]),
-                    ],
-                  ),
-                  Text(
-                    '(57 Reviews)',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.caption,
-                  ),
-                  SizedBox(height: 4),
+                  if (productModel.stock > 0)
+                    Text(
+                      '${productModel.stock} in stock',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyText2.copyWith(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                    ),
+                  if (productModel.stock == 0)
+                    Text(
+                      'Out of stock',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyText2.copyWith(
+                            color: Theme.of(context).hintColor,
+                          ),
+                    ),
+                  SizedBox(height: 16),
                   Container(
                     padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                     child: OutlinedButton(
