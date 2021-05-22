@@ -1,12 +1,11 @@
 import 'package:example_project/model/category_model.dart';
 import 'package:example_project/model/product_model.dart';
+import 'package:example_project/screens/main_screen/widgets/category_card.dart';
+import 'package:example_project/screens/main_screen/widgets/product_card.dart';
 import 'package:example_project/services/category_service.dart';
 import 'package:example_project/services/product_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
-import 'widgets/category_card.dart';
-import 'widgets/product_card.dart';
 
 class BrowsePage extends StatefulWidget {
   const BrowsePage({Key key}) : super(key: key);

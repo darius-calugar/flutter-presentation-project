@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:example_project/model/category_model.dart';
 import 'package:flutter/material.dart';
 
@@ -51,31 +49,6 @@ class CategoryCard extends StatelessWidget {
                       style: Theme.of(context).textTheme.headline5.copyWith(color: Colors.white),
                     ),
                   ],
-                ),
-              ),
-              // if (categoryModel.products.any((product) => product.sale > 0))
-              Positioned.directional(
-                bottom: 0,
-                end: 0,
-                textDirection: TextDirection.ltr,
-                child: Transform(
-                  transform: Matrix4.rotationZ(-pi / 3) * Matrix4.translationValues(12, 148, 0),
-                  child: Material(
-                    elevation: 16,
-                    color: Theme.of(context).colorScheme.primary,
-                    child: Container(
-                      height: 36,
-                      width: 256,
-                      alignment: Alignment.center,
-                      child: Text(
-                        "SALE ${30}%",
-                        style: Theme.of(context).textTheme.headline6.copyWith(
-                              color: Theme.of(context).colorScheme.onPrimary,
-                              fontWeight: FontWeight.w900,
-                            ),
-                      ),
-                    ),
-                  ),
                 ),
               ),
               Positioned.fill(

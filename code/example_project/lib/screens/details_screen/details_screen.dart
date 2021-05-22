@@ -2,7 +2,6 @@ import 'package:example_project/model/product_model.dart';
 import 'package:example_project/services/cart_service.dart';
 import 'package:example_project/services/product_service.dart';
 import 'package:example_project/services/user_service.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class DetailsScreen extends StatefulWidget {
@@ -20,6 +19,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
   _DetailsScreenState(int productId) {
     _product = ProductService.getProduct(productId)..then((product) => _fetchCartAmount(product));
+    _cartAmount = CartService.getCartProductAmount(UserService.currentUser.id, productId);
   }
 
   @override
@@ -28,14 +28,14 @@ class _DetailsScreenState extends State<DetailsScreen> {
       appBar: AppBar(
         title: Text('Product Details'),
       ),
-      body: FutureBuilder(
+      body: FutureBuilder<ProductModel>(
         future: _product,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            ProductModel productModel = snapshot.data;
+            ProductModel product = snapshot.data;
             return ListView(
               children: [
-                productModel.imageBytes != null ? Image.memory(productModel.imageBytes) : Image.asset('assets/images/placeholder.png'),
+                product.imageBytes != null ? Image.memory(product.imageBytes) : Image.asset('assets/images/placeholder.png'),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
@@ -43,16 +43,16 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         child: Text(
-                          productModel.name,
+                          product.name,
                           style: Theme.of(context).textTheme.headline5,
                         ),
                       ),
-                      if (productModel.sale > 0)
+                      if (product.sale > 0)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              '\$${((productModel.price.toDouble()) / (100 - productModel.sale)).toStringAsFixed(2)}',
+                              '\$${((product.price.toDouble()) / (100 - product.sale)).toStringAsFixed(2)}',
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.subtitle1.copyWith(
                                     color: Theme.of(context).disabledColor,
@@ -68,7 +68,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: Text(
-                                '${productModel.sale}% OFF',
+                                '${product.sale}% OFF',
                                 style: Theme.of(context).textTheme.bodyText2.copyWith(
                                       color: Theme.of(context).colorScheme.onPrimary,
                                       fontWeight: FontWeight.bold,
@@ -78,22 +78,22 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           ],
                         ),
                       Text(
-                        '\$${(productModel.price.toDouble() / 100).toStringAsFixed(2)}',
+                        '\$${(product.price.toDouble() / 100).toStringAsFixed(2)}',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.headline5.copyWith(
                               color: Theme.of(context).colorScheme.primary,
                             ),
                       ),
                       SizedBox(height: 8),
-                      if (productModel.stock > 0)
+                      if (product.stock > 0)
                         Text(
-                          '${productModel.stock} in stock',
+                          '${product.stock} in stock',
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodyText2.copyWith(
                                 color: Theme.of(context).colorScheme.secondary,
                               ),
                         ),
-                      if (productModel.stock == 0)
+                      if (product.stock == 0)
                         Text(
                           'Out of stock',
                           textAlign: TextAlign.center,
@@ -113,7 +113,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                     ? Padding(
                                         padding: const EdgeInsets.symmetric(horizontal: 32),
                                         child: ElevatedButton(
-                                          onPressed: () => _onAddToCart(productModel),
+                                          onPressed: () => _onAddToCart(product),
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
@@ -127,7 +127,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           ElevatedButton(
-                                            onPressed: () => _onRemoveFromCart(productModel),
+                                            onPressed: () => _onRemoveFromCart(product),
                                             style: ButtonStyle(
                                               shape: MaterialStateProperty.all(CircleBorder()),
                                             ),
@@ -136,12 +136,12 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                           Padding(
                                             padding: const EdgeInsets.symmetric(horizontal: 8),
                                             child: Text(
-                                              '${cartAmount}',
+                                              '$cartAmount',
                                               style: Theme.of(context).textTheme.headline5,
                                             ),
                                           ),
                                           ElevatedButton(
-                                            onPressed: () => _onAddToCart(productModel),
+                                            onPressed: () => _onAddToCart(product),
                                             style: ButtonStyle(
                                               shape: MaterialStateProperty.all(CircleBorder()),
                                             ),
@@ -160,7 +160,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    productModel.description,
+                    product.description,
                     style: Theme.of(context).textTheme.bodyText2,
                   ),
                 )

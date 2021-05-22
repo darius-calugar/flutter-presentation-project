@@ -14,6 +14,15 @@ class CartService {
     ''')).map((e) => MapEntry(ProductModel.fromJson(e), e['amount'])));
   }
 
+  static Future<int> getCartProductAmount(int userId, int productId) async {
+    log('getCartProductAmount(userId: $userId, productId: $productId)', name: 'CartService', level: 0, time: DateTime.now());
+    return AppDatabase.database.query(
+      'UserProductCart',
+      where: 'userId = ? and productId = ?',
+      whereArgs: [userId, productId],
+    ).then((value) => value.firstWhere((element) => true, orElse: () => Map<String, dynamic>())['amount'] ?? 0);
+  }
+
   static Future<bool> addProductToCart(int userId, int productId) async {
     log('addProductToCart(userId: $userId, productId: $productId)', name: 'CartService', level: 0, time: DateTime.now());
     int amount = (await AppDatabase.database.query(

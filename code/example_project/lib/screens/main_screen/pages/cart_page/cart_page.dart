@@ -1,4 +1,5 @@
 import 'package:example_project/model/product_model.dart';
+import 'package:example_project/screens/main_screen/widgets/product_list_tile.dart';
 import 'package:example_project/services/cart_service.dart';
 import 'package:example_project/services/user_service.dart';
 import 'package:flutter/material.dart';
@@ -58,80 +59,27 @@ class _CartPageState extends State<CartPage> {
               Column(
                 children: products.entries
                     .map(
-                      (entry) => Container(
-                        margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                        child: Row(
-                          children: [
-                            Container(
-                              height: 64,
-                              width: 64,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(4),
-                                child: entry.key.imageBytes != null
-                                    ? Image.memory(
-                                        entry.key.imageBytes,
-                                        fit: BoxFit.cover,
-                                      )
-                                    : Image.asset(
-                                        'assets/images/placeholder.png',
-                                        fit: BoxFit.cover,
-                                      ),
-                              ),
+                      (entry) => ProductListTile(
+                        productModel: entry.key,
+                        actions: [
+                          IconButton(
+                            icon: Icon(Icons.remove),
+                            color: Theme.of(context).colorScheme.primary,
+                            onPressed: () => _onAddCartProduct(entry.key),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Text(
+                              '${entry.value}',
+                              style: Theme.of(context).textTheme.subtitle1,
                             ),
-                            SizedBox(width: 8),
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    entry.key.name,
-                                    style: Theme.of(context).textTheme.subtitle1,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(
-                                    '\$${(entry.key.price * (100 - entry.key.sale) ~/ 100 / 100)}',
-                                    style: Theme.of(context).textTheme.subtitle2.copyWith(
-                                          color: Theme.of(context).colorScheme.primary,
-                                        ),
-                                  ),
-                                  if (entry.key.stock > 0)
-                                    Text(
-                                      '${(entry.key.stock)} in stock',
-                                      style: Theme.of(context).textTheme.caption.copyWith(
-                                            color: Theme.of(context).colorScheme.secondary,
-                                          ),
-                                    ),
-                                  if (entry.key.stock <= 0)
-                                    Text(
-                                      'Out of stock',
-                                      style: Theme.of(context).textTheme.caption.copyWith(
-                                            color: Theme.of(context).colorScheme.error,
-                                          ),
-                                    ),
-                                ],
-                              ),
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.remove),
-                              color: Theme.of(context).colorScheme.primary,
-                              onPressed: () => _onAddCartProduct(entry.key),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
-                              child: Text(
-                                '${entry.value}',
-                                style: Theme.of(context).textTheme.subtitle1,
-                              ),
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.add),
-                              color: Theme.of(context).colorScheme.primary,
-                              onPressed: () => _onRemoveCartProduct(entry.key),
-                            ),
-                          ],
-                        ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.add),
+                            color: Theme.of(context).colorScheme.primary,
+                            onPressed: () => _onRemoveCartProduct(entry.key),
+                          ),
+                        ],
                       ),
                     )
                     .toList(),
@@ -169,13 +117,11 @@ class _CartPageState extends State<CartPage> {
   }
 
   void _onRemoveCartProduct(ProductModel product) {
-    CartService.addProductToCart(UserService.currentUser.id, product.id);
-    _fetchCartProducts();
+    CartService.addProductToCart(UserService.currentUser.id, product.id).then((value) => _fetchCartProducts());
   }
 
   void _onAddCartProduct(ProductModel product) {
-    CartService.removeProductFromCart(UserService.currentUser.id, product.id);
-    _fetchCartProducts();
+    CartService.removeProductFromCart(UserService.currentUser.id, product.id).then((value) => _fetchCartProducts());
   }
 
   void _onGoToCheckout() {
