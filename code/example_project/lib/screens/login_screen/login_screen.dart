@@ -18,9 +18,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _LoginScreenState() {
     SharedPreferences.getInstance().then((sharedPreferences) {
-      _usernameController.text = sharedPreferences.getString('login_username') ?? '';
-      _passwordController.text = sharedPreferences.getString('login_password') ?? '';
-      _rememberCredentials = sharedPreferences.getBool('login_remember_credentials') ?? false;
+      setState(() {
+        _usernameController.text = sharedPreferences.getString('login_username') ?? '';
+        _passwordController.text = sharedPreferences.getString('login_password') ?? '';
+        _rememberCredentials = sharedPreferences.getBool('login_remember_credentials') ?? false;
+      });
     });
   }
 
@@ -38,7 +40,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 Text(
                   'Hello,',
                   style: Theme.of(context).textTheme.headline2.copyWith(
-                        color: Theme.of(context).colorScheme.onBackground,
                         fontWeight: FontWeight.w400,
                       ),
                 ),

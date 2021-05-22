@@ -22,5 +22,15 @@ class Themes {
           onError: const Color(0xFFFFFFFF),
         ),
         textTheme: TextTheme(),
+      ).copyWith(
+        appBarTheme: AppBarTheme(
+          brightness: Brightness.dark,
+          color: const Color(0xFF2A2A30),
+        ),
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: const Color(0xFF2A2A30),
+          selectedItemColor: const Color(0xFFD75650),
+          unselectedItemColor: const Color(0xFFFFFFFF),
+        ),
       );
 }

@@ -1,3 +1,4 @@
+import 'package:example_project/screens/checkout_screen/checkout_screen.dart';
 import 'package:example_project/screens/details_screen/details_screen.dart';
 import 'package:example_project/screens/login_screen/login_screen.dart';
 import 'package:example_project/screens/main_screen/main_screen.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => LoginScreen(),
         '/register': (context) => RegisterScreen(),
         '/main': (context) => MainScreen(),
+        '/checkout': (context) => CheckoutScreen(),
       },
       onGenerateRoute: (settings) {
         final args = settings.arguments as Map<String, dynamic>;

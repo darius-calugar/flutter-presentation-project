@@ -18,13 +18,23 @@ class _MainScreenState extends State<MainScreen> {
     BrowsePage(),
     CartPage(),
   ];
+  final List<IconData> _pageIcons = [
+    Icons.favorite,
+    Icons.search,
+    Icons.shopping_cart,
+  ];
+  final List<String> _pageNames = [
+    'Favorites',
+    'Browse',
+    'Cart',
+  ];
   int _currentPageIndex = 1;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Products'),
+        title: Text(_pageNames[_currentPageIndex]),
         actions: [
           PopupMenuButton(
             child: Padding(
@@ -49,20 +59,14 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         onTap: _setPage,
         currentIndex: _currentPageIndex,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: "Favorites",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.category),
-            label: "Browse",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: "Cart",
-          ),
-        ],
+        items: List.generate(_pages.length, (index) => index)
+            .map(
+              (index) => BottomNavigationBarItem(
+                icon: Icon(_pageIcons[index]),
+                label: _pageNames[index],
+              ),
+            )
+            .toList(),
       ),
     );
   }
