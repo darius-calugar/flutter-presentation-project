@@ -1,8 +1,6 @@
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:example_project/model/category_model.dart';
-
 class ProductModel {
   final int id;
   final String name;
@@ -11,7 +9,7 @@ class ProductModel {
   final int price;
   final int sale;
   final int stock;
-  final CategoryModel category;
+  final int categoryId;
   double relevance;
 
   ProductModel(
@@ -22,7 +20,7 @@ class ProductModel {
     this.price,
     this.sale,
     this.stock,
-    this.category, {
+    this.categoryId, {
     this.relevance,
   })  : assert(name.isNotEmpty),
         assert(description.isNotEmpty),
@@ -41,7 +39,7 @@ class ProductModel {
       'price': price,
       'sale': sale,
       'stock': stock,
-      'category': category?.toJson(),
+      'categoryId': categoryId,
       'relevance': relevance,
     }..removeWhere((key, value) => value == null);
   }
@@ -55,7 +53,7 @@ class ProductModel {
       json['price'],
       json['sale'],
       json['stock'],
-      json['category'],
+      json['categoryId'],
     );
   }
 }

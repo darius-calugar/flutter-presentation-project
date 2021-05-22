@@ -2,6 +2,7 @@ import 'package:example_project/model/product_model.dart';
 import 'package:example_project/services/cart_service.dart';
 import 'package:example_project/services/product_service.dart';
 import 'package:example_project/services/user_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class DetailsScreen extends StatefulWidget {
@@ -18,7 +19,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
   Future<int> _cartAmount;
 
   _DetailsScreenState(int productId) {
-    _product = ProductService.getProduct(productId)..then((product) => _fetchCardAmount(product));
+    _product = ProductService.getProduct(productId)..then((product) => _fetchCartAmount(product));
   }
 
   @override
@@ -101,57 +102,57 @@ class _DetailsScreenState extends State<DetailsScreen> {
                               ),
                         ),
                       SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          FutureBuilder(
-                              future: _cartAmount,
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  final cartAmount = snapshot.data;
-                                  return AnimatedSwitcher(
-                                    duration: Duration(milliseconds: 200),
-                                    child: (cartAmount <= 0)
-                                        ? OutlinedButton(
-                                            onPressed: () => _onAddToCart(productModel),
-                                            child: Row(
-                                              children: [
-                                                Text('Add to cart'),
-                                                Icon(Icons.add_shopping_cart),
-                                              ],
-                                            ),
-                                          )
-                                        : Row(
+                      FutureBuilder(
+                          future: _cartAmount,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              final cartAmount = snapshot.data;
+                              return AnimatedSwitcher(
+                                duration: Duration(milliseconds: 100),
+                                child: (cartAmount <= 0)
+                                    ? Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 32),
+                                        child: ElevatedButton(
+                                          onPressed: () => _onAddToCart(productModel),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
-                                              IconButton(
-                                                icon: Icon(Icons.remove),
-                                                color: Theme.of(context).colorScheme.primary,
-                                                onPressed: () => _onAddToCart(productModel),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                                child: Text(
-                                                  '${cartAmount}',
-                                                  style: Theme.of(context).textTheme.subtitle1,
-                                                ),
-                                              ),
-                                              IconButton(
-                                                icon: Icon(Icons.add),
-                                                color: Theme.of(context).colorScheme.primary,
-                                                onPressed: () => _onRemoveFromCart(productModel),
-                                              ),
+                                              Text('Add to cart'),
+                                              Icon(Icons.add_shopping_cart),
                                             ],
                                           ),
-                                  );
-                                }
-                                return Center(child: CircularProgressIndicator());
-                              }),
-                          IconButton(
-                            onPressed: () {},
-                            icon: Icon(Icons.favorite_outline),
-                          )
-                        ],
-                      ),
+                                        ),
+                                      )
+                                    : Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          ElevatedButton(
+                                            onPressed: () => _onRemoveFromCart(productModel),
+                                            style: ButtonStyle(
+                                              shape: MaterialStateProperty.all(CircleBorder()),
+                                            ),
+                                            child: Icon(Icons.remove),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                                            child: Text(
+                                              '${cartAmount}',
+                                              style: Theme.of(context).textTheme.headline5,
+                                            ),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () => _onAddToCart(productModel),
+                                            style: ButtonStyle(
+                                              shape: MaterialStateProperty.all(CircleBorder()),
+                                            ),
+                                            child: Icon(Icons.add),
+                                          ),
+                                        ],
+                                      ),
+                              );
+                            }
+                            return Center(child: CircularProgressIndicator());
+                          }),
                     ],
                   ),
                 ),
@@ -178,21 +179,18 @@ class _DetailsScreenState extends State<DetailsScreen> {
   }
 
   void _onAddToCart(ProductModel productModel) {
-    CartService.addProductToCart(UserService.currentUser.id, productModel.id);
-    _fetchCardAmount(productModel);
+    CartService.addProductToCart(UserService.currentUser.id, productModel.id).then((result) => _fetchCartAmount(productModel));
   }
 
   void _onRemoveFromCart(ProductModel productModel) {
-    CartService.removeProductFromCart(UserService.currentUser.id, productModel.id);
-    _fetchCardAmount(productModel);
+    CartService.removeProductFromCart(UserService.currentUser.id, productModel.id).then((result) => _fetchCartAmount(productModel));
   }
 
-  void _fetchCardAmount(ProductModel productModel) {
-    final fetchedCartAmount = UserService.fetchUser(UserService.currentUser.id).then((user) {
-      final cartProducts = user.cartProducts;
+  void _fetchCartAmount(ProductModel productModel) {
+    final fetchedCartAmount = CartService.getCartProducts(UserService.currentUser.id).then((cartProducts) {
       print(cartProducts);
-      // if (!cartProducts.containsKey(productModel)) return 0;
-      return cartProducts[productModel];
+      if (!cartProducts.keys.any((product) => product.id == productModel.id)) return 0;
+      return cartProducts.entries.singleWhere((productEntry) => productEntry.key.id == productModel.id).value;
     });
     setState(() {
       _cartAmount = fetchedCartAmount;

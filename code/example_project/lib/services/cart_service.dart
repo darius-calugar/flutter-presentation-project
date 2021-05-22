@@ -1,8 +1,19 @@
 import 'dart:developer';
 
+import 'package:example_project/model/product_model.dart';
 import 'package:example_project/services/app_database.dart';
 
 class CartService {
+  static Future<Map<ProductModel, int>> getCartProducts(int userId) async {
+    log('getCartProducts(userId: $userId)', name: 'CartService', level: 0, time: DateTime.now());
+    return Map.fromEntries((await AppDatabase.database.rawQuery('''
+      select P.*, amount
+      from UserProductCart
+      left join Product P on P.id = productId
+      where userId = $userId
+    ''')).map((e) => MapEntry(ProductModel.fromJson(e), e['amount'])));
+  }
+
   static Future<bool> addProductToCart(int userId, int productId) async {
     log('addProductToCart(userId: $userId, productId: $productId)', name: 'CartService', level: 0, time: DateTime.now());
     int amount = (await AppDatabase.database.query(

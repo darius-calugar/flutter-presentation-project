@@ -11,7 +11,7 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  Future<Map<ProductModel, int>> _cartProducts = UserService.fetchUser(UserService.currentUser.id).then((user) => user.cartProducts);
+  Future<Map<ProductModel, int>> _cartProducts = CartService.getCartProducts(UserService.currentUser.id);
 
   @override
   Widget build(BuildContext context) {
@@ -147,9 +147,10 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  void _getCartProducts() {
+  void _fetchCartProducts() {
+    final fetchedCartProducts = CartService.getCartProducts(UserService.currentUser.id);
     setState(() {
-      _cartProducts = UserService.fetchUser(UserService.currentUser.id).then((user) => user.cartProducts);
+      _cartProducts = fetchedCartProducts;
     });
   }
 
@@ -169,12 +170,12 @@ class _CartPageState extends State<CartPage> {
 
   void _onRemoveCartProduct(ProductModel product) {
     CartService.addProductToCart(UserService.currentUser.id, product.id);
-    _getCartProducts();
+    _fetchCartProducts();
   }
 
   void _onAddCartProduct(ProductModel product) {
     CartService.removeProductFromCart(UserService.currentUser.id, product.id);
-    _getCartProducts();
+    _fetchCartProducts();
   }
 
   void _onGoToCheckout() {

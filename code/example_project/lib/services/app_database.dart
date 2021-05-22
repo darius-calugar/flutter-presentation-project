@@ -60,52 +60,31 @@ class AppDatabase {
         )''');
 
         <UserModel>[
-          UserModel(null, 'root', 'pass', null, null),
-          UserModel(null, 'Guest', 'pass', null, null),
+          UserModel(null, 'root', 'pass'),
+          UserModel(null, 'Guest', 'pass'),
         ].forEach((user) {
           database.insert('User', user.toJson());
         });
 
         <CategoryModel>[
-          CategoryModel(
-            null,
-            'Sneakers',
-            (await rootBundle.load('assets/db/categories/sneakers.jpg')).buffer.asUint8List(),
-            <ProductModel>[
-              ProductModel(null, 'Debug Product 1', 'description', null, 19999, 0, 4, null),
-              ProductModel(null, 'Debug Product 2', 'description', null, 29999, 20, 17, null),
-              ProductModel(null, 'Debug Product 3', 'description', null, 8999, 30, 0, null),
-              ProductModel(null, 'Debug Product 4', 'description', null, 7999, 20, 0, null),
-              ProductModel(null, 'Debug Product 5', 'description', null, 12999, 50, 45, null),
-              ProductModel(null, 'Debug Product 6', 'description', null, 49999, 15, 21, null),
-              ProductModel(null, 'Debug Product 7', 'description', null, 46999, 0, 64, null),
-            ],
-          ),
-          CategoryModel(
-            null,
-            'Sport',
-            (await rootBundle.load('assets/db/categories/sport.jpg')).buffer.asUint8List(),
-            <ProductModel>[
-              ProductModel(null, 'Debug Product 3', 'description', null, 39999, 0, 999, null),
-            ],
-          ),
-          CategoryModel(
-            null,
-            'Heels',
-            (await rootBundle.load('assets/db/categories/heels.jpg')).buffer.asUint8List(),
-            <ProductModel>[],
-          ),
-          CategoryModel(
-            null,
-            'Leather',
-            (await rootBundle.load('assets/db/categories/leather.jpg')).buffer.asUint8List(),
-            <ProductModel>[],
-          ),
+          CategoryModel(1, 'Sneakers', (await rootBundle.load('assets/db/categories/sneakers.jpg')).buffer.asUint8List()),
+          CategoryModel(2, 'Sport', (await rootBundle.load('assets/db/categories/sport.jpg')).buffer.asUint8List()),
+          CategoryModel(3, 'Heels', (await rootBundle.load('assets/db/categories/heels.jpg')).buffer.asUint8List()),
+          CategoryModel(null, 'Leather', (await rootBundle.load('assets/db/categories/leather.jpg')).buffer.asUint8List()),
         ].forEach((category) async {
-          var categoryId = await database.insert('Category', category.toJson()..remove('products'));
-          category.products.forEach((product) {
-            database.insert('Product', product.toJson()..addAll({'categoryId': categoryId}));
-          });
+          await database.insert('Category', category.toJson());
+        });
+
+        <ProductModel>[
+          ProductModel(null, 'Debug Product 1', 'description', null, 19999, 0, 4, 1),
+          ProductModel(null, 'Debug Product 2', 'description', null, 29999, 20, 17, 1),
+          ProductModel(null, 'Debug Product 3', 'description', null, 8999, 30, 0, 1),
+          ProductModel(null, 'Debug Product 4', 'description', null, 7999, 20, 0, 1),
+          ProductModel(null, 'Debug Product 5', 'description', null, 12999, 50, 45, 1),
+          ProductModel(null, 'Debug Product 6', 'description', null, 49999, 15, 21, 1),
+          ProductModel(null, 'Debug Product 7', 'description', null, 46999, 0, 64, 1),
+        ].forEach((product) async {
+          await database.insert('Product', product.toJson());
         });
       },
     );

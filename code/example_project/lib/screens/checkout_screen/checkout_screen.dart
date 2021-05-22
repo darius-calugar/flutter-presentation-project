@@ -23,6 +23,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   bool _checkoutSubmitted = false;
   Future<bool> _checkoutSuccess = Future.value(false);
+  Future<Map<ProductModel, int>> _cartProducts = CartService.getCartProducts(UserService.currentUser.id);
 
   @override
   Widget build(BuildContext context) {
@@ -98,109 +99,118 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ],
               ),
             ),
-            Padding(
-              padding: EdgeInsets.all(16),
-              child: Material(
-                color: Theme.of(context).colorScheme.surface,
-                elevation: 2,
-                borderRadius: BorderRadius.circular(4),
-                child: Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Text(
-                          'Order summary',
-                          style: Theme.of(context).textTheme.headline5,
-                        ),
-                      ),
-                      Divider(height: 32),
-                      Column(
-                        children: UserService.currentUser.cartProducts.entries
-                            .map(
-                              (productEntry) => Row(
+            FutureBuilder(
+                future: _cartProducts,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final cardProducts = snapshot.data;
+                    return Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Material(
+                        color: Theme.of(context).colorScheme.surface,
+                        elevation: 2,
+                        borderRadius: BorderRadius.circular(4),
+                        child: Padding(
+                          padding: EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                child: Text(
+                                  'Order summary',
+                                  style: Theme.of(context).textTheme.headline5,
+                                ),
+                              ),
+                              Divider(height: 32),
+                              Column(
+                                children: cardProducts.entries
+                                    .map<Widget>(
+                                      (productEntry) => Row(
+                                        children: [
+                                          Text(
+                                            '${productEntry.key.name}',
+                                            style: Theme.of(context).textTheme.subtitle1,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            'x${productEntry.value}',
+                                            style: Theme.of(context).textTheme.subtitle2,
+                                          ),
+                                          Expanded(child: Container()),
+                                          Text(
+                                            '\$${(productEntry.key.price * productEntry.value / 100).toStringAsFixed(2)}',
+                                            style: Theme.of(context).textTheme.subtitle1,
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                              SizedBox(height: 16),
+                              Row(
                                 children: [
                                   Text(
-                                    '${productEntry.key.name}',
+                                    'Processing fee',
                                     style: Theme.of(context).textTheme.subtitle1,
                                   ),
-                                  Text(
-                                    'x${productEntry.value}',
-                                    style: Theme.of(context).textTheme.subtitle1,
-                                  ),
+                                  Container(),
                                   Expanded(child: Container()),
                                   Text(
-                                    '\$${(productEntry.key.price * productEntry.value / 100).toStringAsFixed(2)}',
+                                    '\$${(_processingFee / 100).toStringAsFixed(2)}',
                                     style: Theme.of(context).textTheme.subtitle1,
                                   ),
                                 ],
                               ),
-                            )
-                            .toList(),
-                      ),
-                      SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Text(
-                            'Processing fee',
-                            style: Theme.of(context).textTheme.subtitle1,
-                          ),
-                          Container(),
-                          Expanded(child: Container()),
-                          Text(
-                            '\$${(_processingFee / 100).toStringAsFixed(2)}',
-                            style: Theme.of(context).textTheme.subtitle1,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'Transport fee',
-                            style: Theme.of(context).textTheme.subtitle1,
-                          ),
-                          Container(),
-                          Expanded(child: Container()),
-                          Text(
-                            '\$${(_transportFee / 100).toStringAsFixed(2)}',
-                            style: Theme.of(context).textTheme.subtitle1,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Text(
-                            'Total',
-                            style: Theme.of(context).textTheme.headline6,
-                          ),
-                          Expanded(child: Container()),
-                          Text(
-                            '\$${((_totalSum(UserService.currentUser.cartProducts) + _processingFee + _transportFee) / 100).toStringAsFixed(2)}',
-                            style: Theme.of(context).textTheme.headline6.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
+                              Row(
+                                children: [
+                                  Text(
+                                    'Transport fee',
+                                    style: Theme.of(context).textTheme.subtitle1,
+                                  ),
+                                  Container(),
+                                  Expanded(child: Container()),
+                                  Text(
+                                    '\$${(_transportFee / 100).toStringAsFixed(2)}',
+                                    style: Theme.of(context).textTheme.subtitle1,
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Total',
+                                    style: Theme.of(context).textTheme.headline6,
+                                  ),
+                                  Expanded(child: Container()),
+                                  Text(
+                                    '\$${((_totalSum(cardProducts) + _processingFee + _transportFee) / 100).toStringAsFixed(2)}',
+                                    style: Theme.of(context).textTheme.headline6.copyWith(
+                                          color: Theme.of(context).colorScheme.primary,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 32),
+                              ElevatedButton(
+                                onPressed: _onSubmitOrder,
+                                style: ButtonStyle(
+                                  padding: MaterialStateProperty.all(EdgeInsets.all(16)),
+                                  textStyle: MaterialStateProperty.all(Theme.of(context).textTheme.headline6),
                                 ),
+                                child: Text(
+                                  'Submit order',
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      SizedBox(height: 32),
-                      ElevatedButton(
-                        onPressed: _onSubmitOrder,
-                        style: ButtonStyle(
-                          padding: MaterialStateProperty.all(EdgeInsets.all(16)),
-                          textStyle: MaterialStateProperty.all(Theme.of(context).textTheme.headline6),
-                        ),
-                        child: Text(
-                          'Submit order',
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+                    );
+                  } else
+                    return Center(child: CircularProgressIndicator());
+                }),
           ],
         ),
         secondChild: FutureBuilder(

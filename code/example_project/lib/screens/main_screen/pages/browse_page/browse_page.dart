@@ -245,7 +245,7 @@ class _BrowsePageState extends State<BrowsePage> {
   void fetchProducts() async {
     Future<List<ProductModel>> fetchedProducts;
     fetchedProducts = ProductService.getProducts(
-      category: _category,
+      categoryId: _category.id,
       searchString: _searchString,
       sortField: _sortField,
       ascending: _sortAscending,
