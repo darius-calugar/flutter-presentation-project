@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:example_project/model/category_model.dart';
@@ -28,7 +29,7 @@ class ProductModel {
         assert(price > 0),
         assert(sale >= 0 && sale < 100),
         assert(stock >= 0) {
-    if (relevance == null) relevance = sale.toDouble();
+    if (relevance == null) relevance = pow((20 + sale.toDouble()) / 120, 2) * sqrt(price);
   }
 
   Map<String, dynamic> toJson() {
@@ -55,7 +56,6 @@ class ProductModel {
       json['sale'],
       json['stock'],
       json['category'],
-      relevance: json['relevance'],
     );
   }
 }

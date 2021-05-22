@@ -7,7 +7,6 @@ import 'package:sqflite/sqflite.dart';
 
 class AppDatabase {
   static Database database;
-  static UserModel currentUser;
 
   static Future<void> initDatabase() async {
     String path = join(await getDatabasesPath(), 'database.db');
@@ -42,12 +41,27 @@ class AppDatabase {
               sale INTEGER,
               stock INTEGER,
               relevance REAL,
-              categoryId REFERENCES Category(id)
+              categoryId INTEGER REFERENCES Category(id)
             )''');
 
+        database.execute(''' 
+            CREATE TABLE UserProductCart (
+              userId INTEGER REFERENCES User(id),
+              productId INTEGER REFERENCES Product(id),
+              amount INTEGER,
+              PRIMARY KEY (userId, productId)
+        )''');
+
+        database.execute(''' 
+            CREATE TABLE UserProductFavorite (
+              userId INTEGER REFERENCES User(id),
+              productId INTEGER REFERENCES Product(id),
+              PRIMARY KEY (userId, productId)
+        )''');
+
         <UserModel>[
-          UserModel(null, 'root', 'pass'),
-          UserModel(null, 'Guest', 'pass'),
+          UserModel(null, 'root', 'pass', null, null),
+          UserModel(null, 'Guest', 'pass', null, null),
         ].forEach((user) {
           database.insert('User', user.toJson());
         });
@@ -58,13 +72,13 @@ class AppDatabase {
             'Sneakers',
             (await rootBundle.load('assets/db/categories/sneakers.jpg')).buffer.asUint8List(),
             <ProductModel>[
-              ProductModel(null, 'Debug Product 1', 'description', (await rootBundle.load('assets/db/categories/sneakers.jpg')).buffer.asUint8List(), 19999, 0, 4, null),
-              ProductModel(null, 'Debug Product 2', 'description', (await rootBundle.load('assets/db/categories/sneakers.jpg')).buffer.asUint8List(), 29999, 20, 17, null),
-              ProductModel(null, 'Debug Product 3', 'description', (await rootBundle.load('assets/db/categories/sneakers.jpg')).buffer.asUint8List(), 8999, 0, 0, null),
-              ProductModel(null, 'Debug Product 4', 'description', (await rootBundle.load('assets/db/categories/sneakers.jpg')).buffer.asUint8List(), 7999, 0, 0, null),
-              ProductModel(null, 'Debug Product 5', 'description', (await rootBundle.load('assets/db/categories/sneakers.jpg')).buffer.asUint8List(), 12999, 50, 45, null),
-              ProductModel(null, 'Debug Product 6', 'description', (await rootBundle.load('assets/db/categories/sneakers.jpg')).buffer.asUint8List(), 49999, 15, 21, null),
-              ProductModel(null, 'Debug Product 7', 'description', (await rootBundle.load('assets/db/categories/sneakers.jpg')).buffer.asUint8List(), 46999, 70, 64, null),
+              ProductModel(null, 'Debug Product 1', 'description', null, 19999, 0, 4, null),
+              ProductModel(null, 'Debug Product 2', 'description', null, 29999, 20, 17, null),
+              ProductModel(null, 'Debug Product 3', 'description', null, 8999, 30, 0, null),
+              ProductModel(null, 'Debug Product 4', 'description', null, 7999, 20, 0, null),
+              ProductModel(null, 'Debug Product 5', 'description', null, 12999, 50, 45, null),
+              ProductModel(null, 'Debug Product 6', 'description', null, 49999, 15, 21, null),
+              ProductModel(null, 'Debug Product 7', 'description', null, 46999, 0, 64, null),
             ],
           ),
           CategoryModel(

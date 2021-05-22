@@ -1,6 +1,6 @@
 import 'package:example_project/screens/main_screen/pages/cart_page/cart_page.dart';
 import 'package:example_project/screens/main_screen/pages/favorite_page/favorite_page.dart';
-import 'package:example_project/services/auth_service.dart';
+import 'package:example_project/services/user_service.dart';
 import 'package:flutter/material.dart';
 
 import 'pages/browse_page/browse_page.dart';
@@ -41,7 +41,7 @@ class _MainScreenState extends State<MainScreen> {
               padding: EdgeInsets.all(8),
               child: ClipOval(
                 child: Image.network(
-                  'https://picsum.photos/seed/${AuthService.currentUser().username}/64/64',
+                  'https://picsum.photos/seed/${UserService.currentUser.username}/64/64',
                 ),
               ),
             ),
@@ -78,7 +78,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _logout() {
-    AuthService.logout();
+    UserService.logout();
     Navigator.pushNamedAndRemoveUntil(context, '/', (route) => route == null);
   }
 }

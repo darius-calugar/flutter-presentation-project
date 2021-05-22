@@ -1,4 +1,4 @@
-import 'package:example_project/services/auth_service.dart';
+import 'package:example_project/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -138,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void onLogin() async {
     if (_loginFormKey.currentState.validate()) {
-      var user = await AuthService.login(
+      var user = await UserService.login(
         _usernameController.value.text,
         _passwordController.value.text,
       );

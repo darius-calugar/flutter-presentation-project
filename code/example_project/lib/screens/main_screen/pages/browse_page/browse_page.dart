@@ -288,7 +288,7 @@ class _BrowsePageState extends State<BrowsePage> {
                         'Price',
                         style: Theme.of(context).textTheme.headline6,
                       ),
-                      Text('${_defaultMinPrice ~/ 100}'),
+                      Text('\$${_defaultMinPrice ~/ 100}'),
                       StatefulBuilder(
                         builder: (context, setState) {
                           return RangeSlider(
@@ -296,7 +296,7 @@ class _BrowsePageState extends State<BrowsePage> {
                             max: _defaultMaxPrice.toDouble(),
                             divisions: (_defaultMaxPrice - _defaultMinPrice) ~/ 100,
                             values: RangeValues(_minPrice.toDouble(), _maxPrice.toDouble()),
-                            labels: RangeLabels('${_minPrice ~/ 100} RON', '${_maxPrice ~/ 100} RON'),
+                            labels: RangeLabels('\$${_minPrice ~/ 100}', '\$${_maxPrice ~/ 100}'),
                             onChanged: (value) {
                               setState(() {
                                 _minPrice = value.start.toInt();
@@ -306,7 +306,7 @@ class _BrowsePageState extends State<BrowsePage> {
                           );
                         },
                       ),
-                      Text('${_defaultMaxPrice ~/ 100}'),
+                      Text('\$${_defaultMaxPrice ~/ 100}'),
                     ],
                   ),
                   TableRow(

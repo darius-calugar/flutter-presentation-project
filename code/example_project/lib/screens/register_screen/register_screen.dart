@@ -1,4 +1,4 @@
-import 'package:example_project/services/auth_service.dart';
+import 'package:example_project/services/user_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -148,7 +148,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _onCreateAccount() {
     if (_registerFormKey.currentState.validate()) {
-      AuthService.register(
+      UserService.register(
         _usernameController.value.text,
         _passwordController.value.text,
       ).then((success) {

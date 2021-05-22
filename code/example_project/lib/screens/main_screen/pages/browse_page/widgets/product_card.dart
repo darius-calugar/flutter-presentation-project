@@ -43,7 +43,7 @@ class ProductCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          '${((productModel.price.toDouble()) / 100).toStringAsFixed(2)} RON',
+                          '\$${(productModel.price.toDouble() / (100 - productModel.sale)).toStringAsFixed(2)}',
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodyText2.copyWith(
                                 color: Theme.of(context).disabledColor,
@@ -69,7 +69,7 @@ class ProductCard extends StatelessWidget {
                       ],
                     ),
                   Text(
-                    '${((productModel.price.toDouble() * (100 - productModel.sale) / 100) / 100).toStringAsFixed(2)} RON',
+                    '\$${(productModel.price.toDouble() / 100).toStringAsFixed(2)}',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headline6.copyWith(
                           color: Theme.of(context).colorScheme.primary,

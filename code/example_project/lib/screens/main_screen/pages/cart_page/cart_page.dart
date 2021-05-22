@@ -1,5 +1,6 @@
 import 'package:example_project/model/product_model.dart';
-import 'package:example_project/services/product_service.dart';
+import 'package:example_project/services/cart_service.dart';
+import 'package:example_project/services/user_service.dart';
 import 'package:flutter/material.dart';
 
 class CartPage extends StatefulWidget {
@@ -10,11 +11,11 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  Future<List<ProductModel>> _cartProducts = ProductService.getProducts();
+  Future<Map<ProductModel, int>> _cartProducts = UserService.fetchUser(UserService.currentUser.id).then((user) => user.cartProducts);
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<ProductModel>>(
+    return FutureBuilder<Map<ProductModel, int>>(
       future: _cartProducts,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
@@ -26,29 +27,38 @@ class _CartPageState extends State<CartPage> {
                 child: Column(
                   children: [
                     Text(
-                      '\$${99.99.toStringAsFixed(2)}',
+                      '\$${(_totalSum(products) / 100).toStringAsFixed(2)}',
                       style: Theme.of(context).textTheme.headline4.copyWith(
                             color: Theme.of(context).primaryColor,
                             fontWeight: FontWeight.bold,
                           ),
                     ),
                     Text(
-                      '${products.length > 0 ? products.length : 'No'} items in cart',
+                      '${_totalItems(products) > 0 ? _totalItems(products) : 'No'} items in the cart',
                       style: Theme.of(context).textTheme.subtitle1,
                     ),
                     SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: _onGoToCheckout,
+                      onPressed: _totalItems(products) > 0 && _cartValid(products) ? _onGoToCheckout : null,
                       child: Text('Go to checkout'),
-                    )
+                    ),
+                    SizedBox(height: 16),
+                    if (!_cartValid(products))
+                      Text(
+                        'Some items exceed the available stock',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyText2.copyWith(
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                      ),
                   ],
                 ),
               ),
               Divider(),
               Column(
-                children: snapshot.data
+                children: products.entries
                     .map(
-                      (product) => Container(
+                      (entry) => Container(
                         margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                         child: Row(
                           children: [
@@ -57,9 +67,9 @@ class _CartPageState extends State<CartPage> {
                               width: 64,
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(4),
-                                child: product.imageBytes != null
+                                child: entry.key.imageBytes != null
                                     ? Image.memory(
-                                        product.imageBytes,
+                                        entry.key.imageBytes,
                                         fit: BoxFit.cover,
                                       )
                                     : Image.asset(
@@ -74,36 +84,26 @@ class _CartPageState extends State<CartPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.favorite,
-                                        size: 16,
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                      SizedBox(width: 4),
-                                      Text(
-                                        product.name,
-                                        style: Theme.of(context).textTheme.subtitle1,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
+                                  Text(
+                                    entry.key.name,
+                                    style: Theme.of(context).textTheme.subtitle1,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                   Text(
-                                    '\$${(product.price * (100 - product.sale) ~/ 100 / 100)}',
+                                    '\$${(entry.key.price * (100 - entry.key.sale) ~/ 100 / 100)}',
                                     style: Theme.of(context).textTheme.subtitle2.copyWith(
                                           color: Theme.of(context).colorScheme.primary,
                                         ),
                                   ),
-                                  if (product.stock > 0)
+                                  if (entry.key.stock > 0)
                                     Text(
-                                      '${(product.stock)} in stock',
+                                      '${(entry.key.stock)} in stock',
                                       style: Theme.of(context).textTheme.caption.copyWith(
                                             color: Theme.of(context).colorScheme.secondary,
                                           ),
                                     ),
-                                  if (product.stock <= 0)
+                                  if (entry.key.stock <= 0)
                                     Text(
                                       'Out of stock',
                                       style: Theme.of(context).textTheme.caption.copyWith(
@@ -116,19 +116,19 @@ class _CartPageState extends State<CartPage> {
                             IconButton(
                               icon: Icon(Icons.remove),
                               color: Theme.of(context).colorScheme.primary,
-                              onPressed: () {},
+                              onPressed: () => _onAddCartProduct(entry.key),
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 8),
                               child: Text(
-                                '${1}',
+                                '${entry.value}',
                                 style: Theme.of(context).textTheme.subtitle1,
                               ),
                             ),
                             IconButton(
                               icon: Icon(Icons.add),
                               color: Theme.of(context).colorScheme.primary,
-                              onPressed: () {},
+                              onPressed: () => _onRemoveCartProduct(entry.key),
                             ),
                           ],
                         ),
@@ -145,6 +145,36 @@ class _CartPageState extends State<CartPage> {
         }
       },
     );
+  }
+
+  void _getCartProducts() {
+    setState(() {
+      _cartProducts = UserService.fetchUser(UserService.currentUser.id).then((user) => user.cartProducts);
+    });
+  }
+
+  int _totalSum(Map<ProductModel, int> productMap) {
+    if (productMap.isEmpty) return 0;
+    return productMap.entries.map((entry) => entry.key.price * entry.value).reduce((lhs, rhs) => lhs + rhs);
+  }
+
+  int _totalItems(Map<ProductModel, int> productMap) {
+    if (productMap.isEmpty) return 0;
+    return productMap.values.reduce((lhs, rhs) => lhs + rhs);
+  }
+
+  bool _cartValid(Map<ProductModel, int> productMap) {
+    return productMap.entries.every((entry) => entry.key.stock >= entry.value);
+  }
+
+  void _onRemoveCartProduct(ProductModel product) {
+    CartService.addProductToCart(UserService.currentUser.id, product.id);
+    _getCartProducts();
+  }
+
+  void _onAddCartProduct(ProductModel product) {
+    CartService.removeProductFromCart(UserService.currentUser.id, product.id);
+    _getCartProducts();
   }
 
   void _onGoToCheckout() {

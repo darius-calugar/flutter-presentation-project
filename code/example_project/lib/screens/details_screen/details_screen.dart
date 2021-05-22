@@ -1,5 +1,7 @@
 import 'package:example_project/model/product_model.dart';
+import 'package:example_project/services/cart_service.dart';
 import 'package:example_project/services/product_service.dart';
+import 'package:example_project/services/user_service.dart';
 import 'package:flutter/material.dart';
 
 class DetailsScreen extends StatefulWidget {
@@ -12,10 +14,11 @@ class DetailsScreen extends StatefulWidget {
 }
 
 class _DetailsScreenState extends State<DetailsScreen> {
-  Future<ProductModel> product;
+  Future<ProductModel> _product;
+  Future<int> _cartAmount;
 
   _DetailsScreenState(int productId) {
-    product = ProductService.getProduct(productId);
+    _product = ProductService.getProduct(productId)..then((product) => _fetchCardAmount(product));
   }
 
   @override
@@ -25,7 +28,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
         title: Text('Product Details'),
       ),
       body: FutureBuilder(
-        future: product,
+        future: _product,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             ProductModel productModel = snapshot.data;
@@ -48,7 +51,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              '${((productModel.price.toDouble()) / 100).toStringAsFixed(2)} RON',
+                              '\$${((productModel.price.toDouble()) / (100 - productModel.sale)).toStringAsFixed(2)}',
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.subtitle1.copyWith(
                                     color: Theme.of(context).disabledColor,
@@ -74,7 +77,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           ],
                         ),
                       Text(
-                        '${((productModel.price.toDouble() * (100 - productModel.sale) / 100) / 100).toStringAsFixed(2)} RON',
+                        '\$${(productModel.price.toDouble() / 100).toStringAsFixed(2)}',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.headline5.copyWith(
                               color: Theme.of(context).colorScheme.primary,
@@ -101,15 +104,48 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          OutlinedButton(
-                            onPressed: () {},
-                            child: Row(
-                              children: [
-                                Text('Add to cart'),
-                                Icon(Icons.add_shopping_cart),
-                              ],
-                            ),
-                          ),
+                          FutureBuilder(
+                              future: _cartAmount,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  final cartAmount = snapshot.data;
+                                  return AnimatedSwitcher(
+                                    duration: Duration(milliseconds: 200),
+                                    child: (cartAmount <= 0)
+                                        ? OutlinedButton(
+                                            onPressed: () => _onAddToCart(productModel),
+                                            child: Row(
+                                              children: [
+                                                Text('Add to cart'),
+                                                Icon(Icons.add_shopping_cart),
+                                              ],
+                                            ),
+                                          )
+                                        : Row(
+                                            children: [
+                                              IconButton(
+                                                icon: Icon(Icons.remove),
+                                                color: Theme.of(context).colorScheme.primary,
+                                                onPressed: () => _onAddToCart(productModel),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                                child: Text(
+                                                  '${cartAmount}',
+                                                  style: Theme.of(context).textTheme.subtitle1,
+                                                ),
+                                              ),
+                                              IconButton(
+                                                icon: Icon(Icons.add),
+                                                color: Theme.of(context).colorScheme.primary,
+                                                onPressed: () => _onRemoveFromCart(productModel),
+                                              ),
+                                            ],
+                                          ),
+                                  );
+                                }
+                                return Center(child: CircularProgressIndicator());
+                              }),
                           IconButton(
                             onPressed: () {},
                             icon: Icon(Icons.favorite_outline),
@@ -139,5 +175,27 @@ class _DetailsScreenState extends State<DetailsScreen> {
         },
       ),
     );
+  }
+
+  void _onAddToCart(ProductModel productModel) {
+    CartService.addProductToCart(UserService.currentUser.id, productModel.id);
+    _fetchCardAmount(productModel);
+  }
+
+  void _onRemoveFromCart(ProductModel productModel) {
+    CartService.removeProductFromCart(UserService.currentUser.id, productModel.id);
+    _fetchCardAmount(productModel);
+  }
+
+  void _fetchCardAmount(ProductModel productModel) {
+    final fetchedCartAmount = UserService.fetchUser(UserService.currentUser.id).then((user) {
+      final cartProducts = user.cartProducts;
+      print(cartProducts);
+      // if (!cartProducts.containsKey(productModel)) return 0;
+      return cartProducts[productModel];
+    });
+    setState(() {
+      _cartAmount = fetchedCartAmount;
+    });
   }
 }

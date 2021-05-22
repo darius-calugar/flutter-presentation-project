@@ -29,7 +29,7 @@ class CategoryModel {
       json['id'],
       json['name'],
       json['imageBytes'],
-      (json['products'] as Map<String, dynamic>)?.values?.map((e) => ProductModel.fromJson(e))?.toList() ?? [],
+      (json['products'] as List<Map<String, dynamic>>)?.map((e) => ProductModel.fromJson(e))?.toList() ?? [],
     );
   }
 }

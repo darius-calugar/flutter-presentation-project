@@ -10,9 +10,6 @@ class CategoryService {
       'Category',
     ))
         .map<CategoryModel>((json) => CategoryModel.fromJson(json))
-        .toList()
-          ..forEach((element) {
-            print(element);
-          });
+        .toList();
   }
 }
