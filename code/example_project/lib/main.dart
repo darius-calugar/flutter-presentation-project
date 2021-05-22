@@ -1,8 +1,8 @@
-import 'package:example_project/pages/browse_page/browse_page.dart';
-import 'package:example_project/pages/details_page/details_page.dart';
-import 'package:example_project/pages/login_page/login_page.dart';
-import 'package:example_project/pages/register_page/register_page.dart';
-import 'package:example_project/service/app_database.dart';
+import 'package:example_project/screens/details_screen/details_screen.dart';
+import 'package:example_project/screens/login_screen/login_screen.dart';
+import 'package:example_project/screens/main_screen/main_screen.dart';
+import 'package:example_project/screens/register_screen/register_screen.dart';
+import 'package:example_project/services/app_database.dart';
 import 'package:example_project/themes/themes.dart';
 import 'package:flutter/material.dart';
 
@@ -20,15 +20,15 @@ class MyApp extends StatelessWidget {
       theme: Themes.defaultTheme(),
       initialRoute: '/',
       routes: {
-        '/': (context) => LoginPage(),
-        '/register': (context) => RegisterPage(),
-        '/browse': (context) => BrowsePage(),
+        '/': (context) => LoginScreen(),
+        '/register': (context) => RegisterScreen(),
+        '/main': (context) => MainScreen(),
       },
       onGenerateRoute: (settings) {
         final args = settings.arguments as Map<String, dynamic>;
         if (settings.name == '/details') {
           return MaterialPageRoute(
-            builder: (context) => DetailsPage(
+            builder: (context) => DetailsScreen(
               productId: args['productId'],
             ),
           );

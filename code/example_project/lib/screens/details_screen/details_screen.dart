@@ -1,20 +1,20 @@
 import 'package:example_project/model/product_model.dart';
-import 'package:example_project/service/product_service.dart';
+import 'package:example_project/services/product_service.dart';
 import 'package:flutter/material.dart';
 
-class DetailsPage extends StatefulWidget {
+class DetailsScreen extends StatefulWidget {
   final int productId;
 
-  const DetailsPage({Key key, this.productId}) : super(key: key);
+  const DetailsScreen({Key key, this.productId}) : super(key: key);
 
   @override
-  _DetailsPageState createState() => _DetailsPageState(productId);
+  _DetailsScreenState createState() => _DetailsScreenState(productId);
 }
 
-class _DetailsPageState extends State<DetailsPage> {
+class _DetailsScreenState extends State<DetailsScreen> {
   Future<ProductModel> product;
 
-  _DetailsPageState(int productId) {
+  _DetailsScreenState(int productId) {
     product = ProductService.getProduct(productId);
   }
 
@@ -77,7 +77,7 @@ class _DetailsPageState extends State<DetailsPage> {
                         '${((productModel.price.toDouble() * (100 - productModel.sale) / 100) / 100).toStringAsFixed(2)} RON',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.headline5.copyWith(
-                              color: Theme.of(context).colorScheme.primaryVariant,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                       ),
                       SizedBox(height: 8),

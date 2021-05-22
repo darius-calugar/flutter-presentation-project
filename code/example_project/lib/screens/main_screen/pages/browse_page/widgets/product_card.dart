@@ -72,7 +72,7 @@ class ProductCard extends StatelessWidget {
                     '${((productModel.price.toDouble() * (100 - productModel.sale) / 100) / 100).toStringAsFixed(2)} RON',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headline6.copyWith(
-                          color: Theme.of(context).colorScheme.primaryVariant,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                   ),
                   if (productModel.stock > 0)

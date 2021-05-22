@@ -1,15 +1,15 @@
-import 'package:example_project/service/auth_service.dart';
+import 'package:example_project/services/auth_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class RegisterPage extends StatefulWidget {
-  const RegisterPage({Key key}) : super(key: key);
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({Key key}) : super(key: key);
 
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  _RegisterScreenState createState() => _RegisterScreenState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final _registerFormKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -17,7 +17,7 @@ class _RegisterPageState extends State<RegisterPage> {
   String _error = '';
   String _identiconUrl = '';
 
-  _RegisterPageState() {
+  _RegisterScreenState() {
     _usernameController.text = '';
     _passwordController.text = '';
     _repeatPasswordController.text = '';

@@ -1,6 +1,6 @@
 import 'package:example_project/model/category_model.dart';
 import 'package:example_project/model/product_model.dart';
-import 'package:example_project/service/app_database.dart';
+import 'package:example_project/services/app_database.dart';
 
 class ProductService {
   static Future<List<ProductModel>> getProducts({

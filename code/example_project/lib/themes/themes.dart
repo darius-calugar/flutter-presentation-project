@@ -5,21 +5,21 @@ class Themes {
         colorScheme: ColorScheme(
           brightness: Brightness.light,
           // Background Swatch
-          surface: const Color(0xFFF8F8F8),
-          background: const Color(0xFFEFEFEF),
-          onBackground: const Color(0xFF333333),
-          onSurface: const Color(0xFF333333),
+          surface: const Color(0xFFFFFFFF),
+          background: const Color(0xFFEEEEEE),
+          onBackground: const Color(0xFF2A2A30),
+          onSurface: const Color(0xFF2A2A30),
           // Primary Swatch
-          primary: const Color(0xFFD04E4E),
-          primaryVariant: const Color(0xFFC32F2F),
+          primary: const Color(0xFFD75650),
+          primaryVariant: const Color(0xFFCD4944),
           onPrimary: const Color(0xFFFFFFFF),
           // Secondary Swatch
-          secondary: const Color(0xFF4EA3B8),
-          secondaryVariant: const Color(0xFF358EAB),
+          secondary: const Color(0xFF96B3F6),
+          secondaryVariant: const Color(0xFF809CDD),
           onSecondary: const Color(0xFFFFFFFF),
           // Error Swatch
-          error: const Color(0xFFF12323),
-          onError: const Color(0xFF000000),
+          error: const Color(0xFFBC2626),
+          onError: const Color(0xFFFFFFFF),
         ),
         textTheme: TextTheme(),
       );

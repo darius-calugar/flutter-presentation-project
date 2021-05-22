@@ -1,12 +1,12 @@
 import 'package:example_project/model/category_model.dart';
 import 'package:example_project/model/product_model.dart';
-import 'package:example_project/pages/browse_page/widgets/category_card.dart';
-import 'package:example_project/pages/browse_page/widgets/product_card.dart';
-import 'package:example_project/service/auth_service.dart';
-import 'package:example_project/service/category_service.dart';
-import 'package:example_project/service/product_service.dart';
+import 'package:example_project/services/category_service.dart';
+import 'package:example_project/services/product_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+
+import 'widgets/category_card.dart';
+import 'widgets/product_card.dart';
 
 class BrowsePage extends StatefulWidget {
   const BrowsePage({Key key}) : super(key: key);
@@ -43,45 +43,6 @@ class _BrowsePageState extends State<BrowsePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Products'),
-        actions: [
-          PopupMenuButton(
-            child: Padding(
-              padding: EdgeInsets.all(8),
-              child: ClipOval(
-                child: Image.network(
-                  'https://picsum.photos/seed/${AuthService.currentUser().username}/64/64',
-                ),
-              ),
-            ),
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                child: Text('Logout'),
-                value: logout,
-              ),
-            ],
-            onSelected: (action) => action(),
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: "Favorites",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.category),
-            label: "Browse",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: "Cart",
-          ),
-        ],
-      ),
       body: ListView(
         children: [
           Container(
@@ -225,7 +186,7 @@ class _BrowsePageState extends State<BrowsePage> {
                   return GridView.count(
                     primary: false,
                     shrinkWrap: true,
-                    childAspectRatio: 8 / 13,
+                    childAspectRatio: .6,
                     crossAxisCount: 2,
                     children: snapshot.data
                         .map((e) => ProductCard(
@@ -245,11 +206,6 @@ class _BrowsePageState extends State<BrowsePage> {
         ],
       ),
     );
-  }
-
-  void logout() {
-    AuthService.logout();
-    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => route == null);
   }
 
   void onSetCategory(CategoryModel category) {

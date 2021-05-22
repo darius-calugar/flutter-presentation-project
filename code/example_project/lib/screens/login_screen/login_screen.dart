@@ -1,22 +1,22 @@
-import 'package:example_project/service/auth_service.dart';
+import 'package:example_project/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key key}) : super(key: key);
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key key}) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginScreenState extends State<LoginScreen> {
   final _loginFormKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _rememberCredentials = false;
   String _error = '';
 
-  _LoginPageState() {
+  _LoginScreenState() {
     SharedPreferences.getInstance().then((sharedPreferences) {
       _usernameController.text = sharedPreferences.getString('login_username') ?? '';
       _passwordController.text = sharedPreferences.getString('login_password') ?? '';
@@ -153,7 +153,7 @@ class _LoginPageState extends State<LoginPage> {
             sharedPreferences.remove('login_remember_credentials');
           }
         });
-        Navigator.pushReplacementNamed(context, '/browse');
+        Navigator.pushReplacementNamed(context, '/main');
         setState(() {
           _error = '';
         });
