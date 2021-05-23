@@ -32,21 +32,23 @@ class CategoryCard extends StatelessWidget {
                       end: FractionalOffset.bottomRight,
                       colors: [
                         Colors.black54,
-                        Colors.grey.withOpacity(0.0),
-                        Colors.white24,
+                        Colors.black.withOpacity(0.0),
+                        Colors.black.withOpacity(0.0),
                       ],
                     ),
                   ),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       categoryModel.name,
-                      style: Theme.of(context).textTheme.headline5.copyWith(color: Colors.white),
+                      style: Theme.of(context).textTheme.headline6.copyWith(
+                            color: Colors.white,
+                          ),
                     ),
                   ],
                 ),

@@ -23,7 +23,7 @@ class _BrowsePageState extends State<BrowsePage> {
   CategoryModel _category;
   String _searchString = '';
   static final int _defaultMinPrice = 0;
-  static final int _defaultMaxPrice = 100000;
+  static final int _defaultMaxPrice = 1000000;
   int _minPrice = _defaultMinPrice;
   int _maxPrice = _defaultMaxPrice;
   static final int _defaultMinSale = 0;
@@ -182,10 +182,11 @@ class _BrowsePageState extends State<BrowsePage> {
               future: _products,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
+                  print(snapshot.data);
                   return GridView.count(
                     primary: false,
                     shrinkWrap: true,
-                    childAspectRatio: .6,
+                    childAspectRatio: .52,
                     crossAxisCount: 2,
                     children: snapshot.data
                         .map((e) => ProductCard(
@@ -244,7 +245,7 @@ class _BrowsePageState extends State<BrowsePage> {
   void fetchProducts() async {
     Future<List<ProductModel>> fetchedProducts;
     fetchedProducts = ProductService.getProducts(
-      categoryId: _category.id,
+      categoryId: _category?.id,
       searchString: _searchString,
       sortField: _sortField,
       ascending: _sortAscending,

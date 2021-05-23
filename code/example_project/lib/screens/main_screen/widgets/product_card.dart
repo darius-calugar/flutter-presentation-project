@@ -122,7 +122,7 @@ class _ProductCardState extends State<ProductCard> {
                   builder: (context, snapshot) => IconButton(
                     onPressed: snapshot.hasData ? () => _onSetFavorite(!snapshot.data) : null,
                     icon: Icon((snapshot.hasData && snapshot.data) ? Icons.favorite : Icons.favorite_border),
-                    color: (snapshot.hasData && snapshot.data) ? Theme.of(context).colorScheme.primary : Theme.of(context).disabledColor,
+                    color: (snapshot.hasData && snapshot.data) ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),
