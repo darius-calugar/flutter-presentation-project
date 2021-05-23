@@ -22,7 +22,7 @@ This guide explains the steps for building and running the application in **Andr
 - Install Android Studio
 - Install the Flutter and Dart plugins
 - Setup both Flutter and Dart SDKs from `Settings > Languages & Frameworks`
-- Open the Android Virtual Device Manager and create a new android virtual device (API level 30 recommended).
+- Open the Android Virtual Device Manager and create a new android virtual device with API level 30 (recommended). (Pixel 4 XL recommended. If not available, pick a smartphone with a large resolution)
 - Launch the newly created virtual device.
 - Select the virtual device from the list inside the Android Studio toolbar.
 

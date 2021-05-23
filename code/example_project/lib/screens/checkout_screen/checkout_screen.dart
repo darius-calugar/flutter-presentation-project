@@ -128,18 +128,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                     .map<Widget>(
                                       (productEntry) => Row(
                                         children: [
-                                          Text(
-                                            '${productEntry.key.name}',
-                                            style: Theme.of(context).textTheme.subtitle1,
+                                          Expanded(
+                                            child: Text(
+                                              '${productEntry.value}x ${productEntry.key.name}',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              textWidthBasis: TextWidthBasis.longestLine,
+                                              style: Theme.of(context).textTheme.subtitle1,
+                                            ),
                                           ),
-                                          SizedBox(width: 8),
-                                          Text(
-                                            'x${productEntry.value}',
-                                            style: Theme.of(context).textTheme.subtitle2,
-                                          ),
-                                          Expanded(child: Container()),
                                           Text(
                                             '\$${(productEntry.key.price * productEntry.value / 100).toStringAsFixed(2)}',
+                                            textAlign: TextAlign.center,
                                             style: Theme.of(context).textTheme.subtitle1,
                                           ),
                                         ],

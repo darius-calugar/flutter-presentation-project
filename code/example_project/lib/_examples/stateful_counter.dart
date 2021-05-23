@@ -19,7 +19,7 @@ class _StatefulCounterState extends State<StatefulCounter> {
   _StatefulCounterState(initialCounterValue) {
     /// the constructor is called before the initial widget build.
     /// That means setState does not need to be used here.
-    _counterValue = _counterValue;
+    _counterValue = initialCounterValue;
   }
 
   @override

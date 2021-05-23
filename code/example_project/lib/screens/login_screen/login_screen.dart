@@ -30,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.fromLTRB(32, 128, 32, 16),
+        padding: EdgeInsets.fromLTRB(32, 64, 32, 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

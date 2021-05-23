@@ -43,8 +43,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: 256,
-                      width: 256,
+                      height: 200,
+                      width: 200,
                       child: Material(
                         type: MaterialType.circle,
                         color: Theme.of(context).colorScheme.surface,
@@ -55,7 +55,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               Center(
                                 child: Icon(
                                   Icons.face,
-                                  size: 256,
+                                  size: 200,
                                   color: Theme.of(context).dividerColor,
                                 ),
                               ),

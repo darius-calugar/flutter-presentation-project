@@ -23,12 +23,12 @@ class StatelessCard extends StatelessWidget {
           ),
           SizedBox(height: 16),
           Text(
-            'This is a card subtitle',
+            subtitle,
             style: Theme.of(context).textTheme.subtitle1,
           ),
           SizedBox(height: 16),
           Text(
-            'This text is really small',
+            caption,
             style: Theme.of(context).textTheme.caption,
           ),
         ],
